@@ -70,8 +70,24 @@ it('checkboxes', ()=>{
 //LISTS AND DROPDOWNS
 it.only('checkboxes', ()=>{
     cy.contains('Modal & Overlays').click()
+// IF the dropdown is a Native HTML Dropdown (with <select> in html code)
     cy.contains('Toastr').click()
     cy.contains('div','Toast type:').find('select').select('info').should('have.value', 'info')//=> find a <div> that has the text "Toast type:" (parent), 
     // .find('select') looks inside that div for a <select>,  select option with text : info
+    // if it is Custom Dropdowns (other than select)
+    cy.contains('div','Position:').find('nb-select').click()
+    cy.get('.option-list').contains('bottom-right').click()
+    //cy.get('body > ngx-app > ngx-pages > ngx-one-column-layout > nb-layout > div.scrollable-container > div > div > div > div > nb-layout-column > ngx-modal-overlays > ngx-toastr > nb-card > nb-card-body > div > div:nth-child(1) > div:nth-child(1) > nb-select > button').click()
+    cy.contains('div','Position:').find('nb-select').should('have.text','bottom-right')
+//to select every single option of the list in one go
+    cy.contains('div','Position:').find('nb-select').then(dropdown=>{
+        cy.wrap(dropdown).click()// to open the list
+        cy.get('.option-list nb-option').each((option, index, list) =>{
+            cy.wrap(option).click()// to select option 
+            if(index<list.length-1)
+                cy.wrap(dropdown).click()// to open the list again because after selecting an option the list closes or collapse
+        })
+
+    })
 
 })
