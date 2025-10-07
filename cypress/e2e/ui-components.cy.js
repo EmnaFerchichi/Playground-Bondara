@@ -42,7 +42,7 @@ cy.wait(1000)
 
 
 //RADIO BUTTONS :
-it.only('radio buttons', ()=>{
+it('radio buttons', ()=>{
     cy.contains('Forms').click()
     cy.contains('Form Layouts').click()
     //Selecting by radio button
@@ -68,7 +68,7 @@ it('checkboxes', ()=>{
 })
 
 //LISTS AND DROPDOWNS
-it.only('checkboxes', ()=>{
+it('checkboxes', ()=>{
     cy.contains('Modal & Overlays').click()
 // IF the dropdown is a Native HTML Dropdown (with <select> in html code)
     cy.contains('Toastr').click()
@@ -88,6 +88,99 @@ it.only('checkboxes', ()=>{
                 cy.wrap(dropdown).click()// to open the list again because after selecting an option the list closes or collapse
         })
 
-    })
+    })   
 
 })
+//TOOLTIPS : Its a text that appears only when you put the mouse on top of a button and then disappears once the mouse moves out of the button
+it('tooltips',()=>{
+ cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+    cy.contains('button','Top').trigger('mouseenter')
+    cy.get('nb-tooltip').should('have.text','This is a tooltip')
+
+})
+
+
+//DIALOG BOXES
+it('dialog boxes',()=>{
+ cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    //Browser confirm popup:
+        cy.get('.nb-trash').first().click() 
+        cy.on('window:confirm', confirm=>{    //Option 1 to confirm the delete
+        expect(confirm).to.equal('Are you sure you want to delete?')})
+
+    //OR
+    //cy.window().then(win=>{
+      //  cy.stub(win,'confirm').as('dialogBox').returns(true)
+    //})
+    //cy.get('.nb-trash').first().click()
+    //cy.get('@dialogBox').should('be.calledWith','Are you sure you want to delete?')
+    //})
+
+
+    //Browser Cancel Popup : 
+    cy.get('.nb-trash').first().click()  // Click the delete button
+
+    cy.on('window:confirm', confirmText => {
+    expect(confirmText).to.equal('Are you sure you want to delete?')
+    return false})  // <- this clicks CANCEL
+   
+    //OR
+    //cy.window().then(win=>{
+      //  cy.stub(win,'confirm').as('dialogBox').returns(false)
+    //})
+    //cy.get('.nb-trash').first().click()
+    //cy.get('@dialogBox').should('be.calledWith','Are you sure you want to delete?')
+})
+
+
+it.only('Web Tables',()=>{
+ cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+    //1. Finding a specific Row by text
+    cy.get('tbody').contains('tr','Larry').then(tableRow=>{
+        cy.wrap(tableRow).find('.nb-edit').click()
+         cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('35')
+         cy.wrap(tableRow).find('.nb-checkmark').click()
+         //validation:
+         cy.wrap(tableRow).find('td').last().should('have.text','35')
+    })
+    //2. Finding a specific Row by Index
+    cy.get('.nb-plus').click()
+    cy.get('thead tr').eq(2).then(tableRow=>{
+        cy.wrap(tableRow).find('[placeholder="First Name"]').type('John')
+        cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Smith')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+    })
+    //Validation :
+    cy.get('tbody tr').first().find('td').then(tableColumns=>{
+        cy.wrap(tableColumns).eq(2).should('have.text','John') //
+        cy.wrap(tableColumns).eq(3).should('have.text','Smith')
+    })
+
+    //3. Looping through the rows
+//cy.get('[placeholder="Age"]').type(20)
+//cy.wait(500)
+//cy.get('tbody tr').each(tableRows=>{
+  //  cy.wrap(tableRows).find('td').last().should('have.text',20)
+//})
+ // instead of typing a specific number like 20
+ //we can test on many 
+ const ages =[20,30,40,200]
+ cy.wrap(ages).each(age=>{
+    cy.get('[placeholder="Age"]').clear().type(age)
+    cy.wait(500)
+    cy.get('tbody tr').each(tableRows=>{
+         if (age == 200) {cy.wrap(tableRows).should('contain.text', 'No data found')} 
+       else{cy.wrap(tableRows).find('td').last().should('have.text',age)} 
+        })
+    
+ })
+
+}) 
+
+
+
+
