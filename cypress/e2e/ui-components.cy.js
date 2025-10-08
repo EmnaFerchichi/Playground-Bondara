@@ -24,7 +24,6 @@ cy.get('#inputEmail1').should('have.value',`${name}@gmail.com`).clear().type('Th
 //  if i dont know the value already existing : 
 cy.get('#inputEmail1').should('not.have.value','').clear().type('Thouraya@gmail.Com') //i make sure that the input value is not empty 
 // and then i type my value 
-
 })
 //Clicking on enter button (keyboard) instead of login button:
 
@@ -64,7 +63,6 @@ it('checkboxes', ()=>{
     cy.get('[type="checkbox"]').check({force:true}) // to ckeck all of the checkboxes
     cy.get('[type="checkbox"]').uncheck({force:true}) // to unckeck all of the checkboxes
     cy.get('[type="checkbox"]').should('be.checked')
- 
 })
 
 //LISTS AND DROPDOWNS
@@ -87,9 +85,7 @@ it('checkboxes', ()=>{
             if(index<list.length-1)
                 cy.wrap(dropdown).click()// to open the list again because after selecting an option the list closes or collapse
         })
-
     })   
-
 })
 //TOOLTIPS : Its a text that appears only when you put the mouse on top of a button and then disappears once the mouse moves out of the button
 it('tooltips',()=>{
@@ -97,10 +93,7 @@ it('tooltips',()=>{
     cy.contains('Tooltip').click()
     cy.contains('button','Top').trigger('mouseenter')
     cy.get('nb-tooltip').should('have.text','This is a tooltip')
-
 })
-
-
 //DIALOG BOXES
 it('dialog boxes',()=>{
  cy.contains('Tables & Data').click()
@@ -135,8 +128,8 @@ it('dialog boxes',()=>{
     //cy.get('@dialogBox').should('be.calledWith','Are you sure you want to delete?')
 })
 
-
-it.only('Web Tables',()=>{
+// TABLES
+it('Web Tables',()=>{
  cy.contains('Tables & Data').click()
     cy.contains('Smart Table').click()
     //1. Finding a specific Row by text
@@ -166,21 +159,108 @@ it.only('Web Tables',()=>{
 //cy.get('tbody tr').each(tableRows=>{
   //  cy.wrap(tableRows).find('td').last().should('have.text',20)
 //})
- // instead of typing a specific number like 20
- //we can test on many 
- const ages =[20,30,40,200]
- cy.wrap(ages).each(age=>{
-    cy.get('[placeholder="Age"]').clear().type(age)
-    cy.wait(500)
-    cy.get('tbody tr').each(tableRows=>{
-         if (age == 200) {cy.wrap(tableRows).should('contain.text', 'No data found')} 
-       else{cy.wrap(tableRows).find('td').last().should('have.text',age)} 
-        })
-    
- })
 
+ // instead of typing a specific number like 20
+ //we can test on many values at once :
+ const ages =[20,30,40,200]
+ cy.wrap(ages).each(age=>{ // for each number of the table ages
+    cy.get('[placeholder="Age"]').clear().type(age)// we need to clear before everytime we type 
+    cy.wait(500)
+    cy.get('tbody tr').each(tableRows=>{     //for each row 
+       if (age == 200) {cy.wrap(tableRows).should('contain.text', 'No data found')} 
+       else{cy.wrap(tableRows).find('td').last().should('have.text',age)} //checking if the value of the last column of that row (AGE) is valid
+        })
+    })
 }) 
 
 
+//DATE PICKER
+it('datepickers',()=>{   
+
+     cy.contains('Forms').click()
+    cy.contains('Datepicker').click()
 
 
+
+    function selectDateFromCurrentDay(day) {
+        let date = new Date()// Date courant
+        date.setDate(date.getDate() + day)//modifier la date courante en l'ajoutant 5 jours
+        let futureDay = date.getDate()//retrieve the day of the current date
+        let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long' })// returns the full month name in English
+        let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short' })//returns the short version of the  month name in English
+        let futureYear = date.getFullYear()//returns the year
+        let dateToAssert = `${futureMonthShort} ${futureDay}, ${futureYear}` 
+
+        cy.get('nb-calendar-view-mode').invoke('text').then(calendarMonthAndYear => {
+            if (!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)) { //if the month in the datepicker or the year 
+            // are not matching the updated date then we're gonna select the next month, otherwise  
+                cy.get('[data-name="chevron-right"]').click()
+                selectDateFromCurrentDay(day) //we call the same function to repeat again until we reach the corrrect month and year
+            } else {
+                cy.get('.day-cell').not('.bounding-month').contains(futureDay).click()
+            }
+        })
+        return dateToAssert
+    }
+
+//The function selectDateFromCurrentDay(day) selects a date in a date picker that is a certain number of days from today.
+
+//It:
+
+//Calculates the future date by adding day days to the current date.
+
+//Formats that date (e.g., "Oct 13, 2025") to use later for verification.
+
+//Checks if the date picker is showing the correct month and year.
+
+//If not, it clicks the next month button and calls itself again until the right month appears.
+
+//Once the correct month is visible, it selects the right day on the calendar.
+
+//Finally, it returns the formatted date string.
+
+    cy.get('[placeholder="Form Picker"]').then(input => {
+        cy.wrap(input).click()
+        const dateToAssert = selectDateFromCurrentDay(400)
+        cy.wrap(input).should('have.value', dateToAssert)
+    })
+    
+})
+
+
+// Sliders : 
+it.only('SLIDERS',()=>{
+    cy.get('[tabtitle="Temperature"] circle')
+    .invoke('attr', 'cy','42.34') //Set the attribute cx to 38.66
+    .invoke('attr', 'cx','52.64')
+    .click()
+    cy.get('[class="value temperature h1"]').should('contain.text','18')
+
+})
+
+//DRAG AND DROP :
+it('DRAG AND DROP',()=>{
+    cy.contains('Extra Components').click()
+    cy.contains('Drag & Drop').click()
+    cy.get('#todo-list div').first().trigger('dragstart') // select the first element of the list
+    cy.get('#drop-list').trigger('drop')
+})
+
+
+it('iFRAMES',()=>{
+
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Dialog').click()
+    cy.frameLoaded('[data-cy="esc-close-iframe"]') // to verify that the iframe is loaded
+    //OPtion 1
+    cy.iframe('[data-cy="esc-close-iframe"]').contains('Open Dialog with esc close').click()
+    cy.contains('Dismiss Dialog').click()
+    //OR
+    cy.enter('[data-cy="esc-close-iframe"]').then( getBody => {
+        getBody().contains('Open Dialog with esc close').click()// the first choice of iframe
+        cy.contains('Dismiss Dialog').click()
+        getBody().contains('Open Dialog without esc close').click()// the second choice of iframe
+        cy.contains('OK').click()
+    })
+
+})
