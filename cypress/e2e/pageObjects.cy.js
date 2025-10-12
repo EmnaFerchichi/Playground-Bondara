@@ -5,7 +5,8 @@ const { onFormLyoutsPage } = require("../page-objects/formLayoutsPage")
 const { navigateTo } = require("../page-objects/navigationPage")
 
 beforeEach('Open application', () => {
-    cy.visit('/')
+    //cy.visit('/')
+    cy.openHomePage()
 })
 
 it('navigation test',()=>{
