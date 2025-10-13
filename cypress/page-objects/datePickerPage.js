@@ -1,18 +1,16 @@
-//Same methof of the DatePicker
 function selectDateFromCurrentDay(day) { 
-        let date = new Date()// Date courant
-        date.setDate(date.getDate() + day)//modifier la date courante en l'ajoutant 5 jours
-        let futureDay = date.getDate()//retrieve the day of the current date
-        let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long' })// returns the full month name in English
-        let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short' })//returns the short version of the  month name in English
-        let futureYear = date.getFullYear()//returns the year
+        let date = new Date()
+        date.setDate(date.getDate() + day)
+        let futureDay = date.getDate()
+        let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long' })
+        let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short' })
+        let futureYear = date.getFullYear()
         let dateToAssert = `${futureMonthShort} ${futureDay}, ${futureYear}` 
 
         cy.get('nb-calendar-view-mode').invoke('text').then(calendarMonthAndYear => {
-            if (!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)) { //if the month in the datepicker or the year 
-            // are not matching the updated date then we're gonna select the next month, otherwise  
+            if (!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)) { 
                 cy.get('[data-name="chevron-right"]').click()
-                selectDateFromCurrentDay(day) //we call the same function to repeat again until we reach the corrrect month and year
+                selectDateFromCurrentDay(day) 
             } else {
                 cy.get('.day-cell').not('.bounding-month').contains(futureDay).click()
             }
@@ -37,11 +35,7 @@ class DatePickerPage{
         const dateToAssertEnd = selectDateFromCurrentDay(numberOfDaysFromTodayEnd)
         const finalDate = `${dateToAssertStart} - ${dateToAssertEnd}`
         cy.wrap(input).should('have.value', finalDate)
-        
-
     })
-
-
     }
 }
 export const onDatePickerPage = new DatePickerPage()
