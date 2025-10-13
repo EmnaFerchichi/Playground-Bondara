@@ -7,26 +7,18 @@ it('input fields',()=>{
 cy.contains('Forms').click()
 cy.contains('Form Layouts').click()
 
-cy.get('#inputEmail1').type("emna@gmail.com",{delay : 200}).clear() // to type a email address slowly
-cy.get('#inputEmail1').type("emna@gmail.com",{delay : 200}).type("Hello").clear() // same but to delete the email you wrote and then type Hello instead a,d then clear again
-//cy.contains('nb-card', 'Using the Grid').contains("Email").type('Thouraya@gmail.Com') // incase i didnt find the id of the Email input
+cy.get('#inputEmail1').type("emna@gmail.com",{delay : 200}).clear() 
+cy.get('#inputEmail1').type("emna@gmail.com",{delay : 200}).type("Hello").clear() 
 
-//using a cariable inside the email input
 const name='Artem'
 cy.contains('nb-card', 'Using the Grid').contains("Email").type(`${name}@gmail.com`)
-//Sometimes there are values that already exixt in the field before you type in it so we need to make sure that its fully written 
-// and then we delete it and type:
 
-//  if i know the value already existing
+
 cy.get('#inputEmail1').should('have.value',`${name}@gmail.com`).clear().type('Thouraya@gmail.Com')//i make sure that the input value is not empty 
-// and then i type my value 
 
-//  if i dont know the value already existing : 
-cy.get('#inputEmail1').should('not.have.value','').clear().type('Thouraya@gmail.Com') //i make sure that the input value is not empty 
-// and then i type my value 
+cy.get('#inputEmail1').should('not.have.value','').clear().type('Thouraya@gmail.Com') 
 })
 //Clicking on enter button (keyboard) instead of login button:
-
 it('Login with Enter Key',()=>{
 cy.contains('Auth').click()
 cy.contains('Login').click()
@@ -37,8 +29,6 @@ cy.get('#input-email').click().type('emna@gmail.com',{delay : 100})
 cy.wait(1000)
 .focused().type('Welcome{enter}',{delay : 100})
 })
-
-
 
 //RADIO BUTTONS :
 it('radio buttons', ()=>{
@@ -83,11 +73,11 @@ it('checkboxes', ()=>{
         cy.get('.option-list nb-option').each((option, index, list) =>{
             cy.wrap(option).click()// to select option 
             if(index<list.length-1)
-                cy.wrap(dropdown).click()// to open the list again because after selecting an option the list closes or collapse
+                cy.wrap(dropdown).click()
         })
     })   
 })
-//TOOLTIPS : Its a text that appears only when you put the mouse on top of a button and then disappears once the mouse moves out of the button
+//TOOLTIPS 
 it('tooltips',()=>{
  cy.contains('Modal & Overlays').click()
     cy.contains('Tooltip').click()
@@ -183,19 +173,18 @@ it('datepickers',()=>{
 
 
     function selectDateFromCurrentDay(day) {
-        let date = new Date()// Date courant
-        date.setDate(date.getDate() + day)//modifier la date courante en l'ajoutant 5 jours
-        let futureDay = date.getDate()//retrieve the day of the current date
-        let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long' })// returns the full month name in English
-        let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short' })//returns the short version of the  month name in English
-        let futureYear = date.getFullYear()//returns the year
+        let date = new Date()
+        date.setDate(date.getDate() + day)
+        let futureDay = date.getDate()
+        let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long' })
+        let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short' })
+        let futureYear = date.getFullYear()
         let dateToAssert = `${futureMonthShort} ${futureDay}, ${futureYear}` 
 
         cy.get('nb-calendar-view-mode').invoke('text').then(calendarMonthAndYear => {
-            if (!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)) { //if the month in the datepicker or the year 
-            // are not matching the updated date then we're gonna select the next month, otherwise  
+            if (!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)) {
                 cy.get('[data-name="chevron-right"]').click()
-                selectDateFromCurrentDay(day) //we call the same function to repeat again until we reach the corrrect month and year
+                selectDateFromCurrentDay(day) 
             } else {
                 cy.get('.day-cell').not('.bounding-month').contains(futureDay).click()
             }
@@ -203,21 +192,7 @@ it('datepickers',()=>{
         return dateToAssert
     }
 
-//The function selectDateFromCurrentDay(day) selects a date in a date picker that is a certain number of days from today.
 
-//It:
-
-//Calculates the future date by adding day days to the current date.
-
-//Formats that date (e.g., "Oct 13, 2025") to use later for verification.
-
-//Checks if the date picker is showing the correct month and year.
-
-//If not, it clicks the next month button and calls itself again until the right month appears.
-
-//Once the correct month is visible, it selects the right day on the calendar.
-
-//Finally, it returns the formatted date string.
 
     cy.get('[placeholder="Form Picker"]').then(input => {
         cy.wrap(input).click()
@@ -242,7 +217,7 @@ it.only('SLIDERS',()=>{
 it('DRAG AND DROP',()=>{
     cy.contains('Extra Components').click()
     cy.contains('Drag & Drop').click()
-    cy.get('#todo-list div').first().trigger('dragstart') // select the first element of the list
+    cy.get('#todo-list div').first().trigger('dragstart') 
     cy.get('#drop-list').trigger('drop')
 })
 
@@ -251,15 +226,15 @@ it('iFRAMES',()=>{
 
     cy.contains('Modal & Overlays').click()
     cy.contains('Dialog').click()
-    cy.frameLoaded('[data-cy="esc-close-iframe"]') // to verify that the iframe is loaded
+    cy.frameLoaded('[data-cy="esc-close-iframe"]') 
     //OPtion 1
     cy.iframe('[data-cy="esc-close-iframe"]').contains('Open Dialog with esc close').click()
     cy.contains('Dismiss Dialog').click()
     //OR
     cy.enter('[data-cy="esc-close-iframe"]').then( getBody => {
-        getBody().contains('Open Dialog with esc close').click()// the first choice of iframe
+        getBody().contains('Open Dialog with esc close').click()
         cy.contains('Dismiss Dialog').click()
-        getBody().contains('Open Dialog without esc close').click()// the second choice of iframe
+        getBody().contains('Open Dialog without esc close').click()
         cy.contains('OK').click()
     })
 
