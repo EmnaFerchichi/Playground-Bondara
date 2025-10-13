@@ -14,8 +14,7 @@ const name='Artem'
 cy.contains('nb-card', 'Using the Grid').contains("Email").type(`${name}@gmail.com`)
 
 
-cy.get('#inputEmail1').should('have.value',`${name}@gmail.com`).clear().type('Thouraya@gmail.Com')//i make sure that the input value is not empty 
-
+cy.get('#inputEmail1').should('have.value',`${name}@gmail.com`).clear().type('Thouraya@gmail.Com')
 cy.get('#inputEmail1').should('not.have.value','').clear().type('Thouraya@gmail.Com') 
 })
 //Clicking on enter button (keyboard) instead of login button:
@@ -23,7 +22,6 @@ it('Login with Enter Key',()=>{
 cy.contains('Auth').click()
 cy.contains('Login').click()
 cy.get('#input-email').click().type('emna@gmail.com',{delay : 100})
-// clicking on TAB (to go to the next input or element)  can help when u dont know the id of the next element:
 .press(Cypress.Keyboard.Keys.TAB)
 .press(Cypress.Keyboard.Keys.TAB)
 cy.wait(1000)
@@ -35,8 +33,7 @@ it('radio buttons', ()=>{
     cy.contains('Forms').click()
     cy.contains('Form Layouts').click()
     //Selecting by radio button
-    cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then(allRadioButtons=>{// if the real button is hidden 
-    // its classs says "visually hidden"(cypress cant access it so we need to : 
+    cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then(allRadioButtons=>{
         cy.wrap(allRadioButtons).eq(0).check({force:true}).should('be.checked')
         cy.wrap(allRadioButtons).eq(1).check({force:true})
         cy.wrap(allRadioButtons).eq(0).should('not.be.checked')
@@ -58,11 +55,8 @@ it('checkboxes', ()=>{
 //LISTS AND DROPDOWNS
 it('checkboxes', ()=>{
     cy.contains('Modal & Overlays').click()
-// IF the dropdown is a Native HTML Dropdown (with <select> in html code)
     cy.contains('Toastr').click()
-    cy.contains('div','Toast type:').find('select').select('info').should('have.value', 'info')//=> find a <div> that has the text "Toast type:" (parent), 
-    // .find('select') looks inside that div for a <select>,  select option with text : info
-    // if it is Custom Dropdowns (other than select)
+    cy.contains('div','Toast type:').find('select').select('info').should('have.value', 'info') 
     cy.contains('div','Position:').find('nb-select').click()
     cy.get('.option-list').contains('bottom-right').click()
     //cy.get('body > ngx-app > ngx-pages > ngx-one-column-layout > nb-layout > div.scrollable-container > div > div > div > div > nb-layout-column > ngx-modal-overlays > ngx-toastr > nb-card > nb-card-body > div > div:nth-child(1) > div:nth-child(1) > nb-select > button').click()
@@ -158,7 +152,7 @@ it('Web Tables',()=>{
     cy.wait(500)
     cy.get('tbody tr').each(tableRows=>{     //for each row 
        if (age == 200) {cy.wrap(tableRows).should('contain.text', 'No data found')} 
-       else{cy.wrap(tableRows).find('td').last().should('have.text',age)} //checking if the value of the last column of that row (AGE) is valid
+       else{cy.wrap(tableRows).find('td').last().should('have.text',age)} 
         })
     })
 }) 
@@ -206,7 +200,7 @@ it('datepickers',()=>{
 // Sliders : 
 it.only('SLIDERS',()=>{
     cy.get('[tabtitle="Temperature"] circle')
-    .invoke('attr', 'cy','42.34') //Set the attribute cx to 38.66
+    .invoke('attr', 'cy','42.34') 
     .invoke('attr', 'cx','52.64')
     .click()
     cy.get('[class="value temperature h1"]').should('contain.text','18')
