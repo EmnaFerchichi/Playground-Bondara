@@ -21,7 +21,6 @@ it('Hello World 1', () => {
     cy.get('[placeholder="Email"]')
     //Locating by Entire class value
     cy.get('[class="input-full-width size-medium status-basic shape-rectangle nb-transition"]')
-    //How to combine several attributes as a locator of a specific element
     cy.get('[placeholder="Email"][fullwidth]')
     cy.get('input[placeholder="Email"]')
     //find by data-cy attribute
@@ -32,26 +31,25 @@ it("Cypress Locator Method", () => {
     // get() - to to find the elements on the page
     // find() - to find only child elements
     // contains - to find web elements by text
-    //cy.contains('sign in', {matchCase: false}) // matchcase : false => to disable the exact match
-    cy.contains('[status="warning"]', "Sign in") //locating a button inside a form with contains
-    cy.contains('nb-card', "Horizontal form").find('button') //locating a button inside a form with contains+find
-    cy.contains('nb-card', 'Horizontal form').get('button')//locating a button inside a form with contains+get
+    //cy.contains('sign in', {matchCase: false})
+    cy.contains('[status="warning"]', "Sign in")
+    cy.contains('nb-card', "Horizontal form").find('button') 
+    cy.contains('nb-card', 'Horizontal form').get('button')
 
 
 })
 it('Child Elements', () => {
-    cy.contains('nb-card', 'Using the Grid').find('button')// we find the nb-card where there is "using the grid" and then we find the button
+    cy.contains('nb-card', 'Using the Grid').find('button')
     //OR
-    cy.contains('nb-card', 'Using the Grid').find('.row').find('button')// same but more detailed  (.row is the name of the class where the button exixts under a div )
-    cy.get('nb-card') //to search for elements under nb-card in the whole page
+    cy.contains('nb-card', 'Using the Grid').find('.row').find('button')
+    cy.get('nb-card')
 
 
 })
 
 it('Child Elements', () => {
     cy.get('nb-card').find('nb-radio-group').contains('Option 1')
-    cy.get('nb-card nb-radio-group').contains('Option 1') //   we can use the parent and the child using space
-    // finding child element direct related to parent 
+    cy.get('nb-card nb-radio-group').contains('Option 1') 
     cy.get('nb-card > nb-card-body')
     
 })
@@ -64,7 +62,7 @@ it('Finding Email',()=>{
 it('Parent elements',()=>{
   // cy.get('#inputEmail1').parents('form').find('button')//OR
    //cy.contains('Using the Grid').parent().find('button')//OR
-  // cy.get('#inputEmail1').parentsUntil('form').find('button') // Error because it stopped before form
+  // cy.get('#inputEmail1').parentsUntil('form').find('button')
    //cy.get('#inputEmail1').parentsUntil('nb-card-body').find('button')
    
 })
@@ -74,28 +72,17 @@ cy.get('#inputEmail1')
 .parents('form')
 .find('button')
 .click()
-cy.get('#inputEmail1') // we did it again because sometimes when we click on a button it takes us to another page  and DOM changes
+cy.get('#inputEmail1') 
 .parents('form')
 .find('nb-radio')
 .first()
 .should('have.text','Option 1') 
-// => So we started with input field and we traveled up.
-//   -Then we found the button.
-
-//    -Then we made a click on this button.
-
-//    -Then we traveled up to the form again.
-
-//    -Then we found all three radio buttons.
-
-//    -We found the first one and made a validation that the first radio button has the option one.
-})
 
 it('Reusing Locators',()=>{
     //1. Cypress Alias :
    // cy.get('#inputEmail1').as('inputEmail1')  // save cy.get('#inputEmail1') as 'inputEmail1'
-   // cy.get('@inputEmail1').parents('form').find('button') // cy.get('@inputEmail1') : retrieve it
-    //cy.get('@inputEmail1').parents('form').find('nb-radio') // retrive again 
+   // cy.get('@inputEmail1').parents('form').find('button') 
+    //cy.get('@inputEmail1').parents('form').find('nb-radio')
 
     //2. Cypress Then Method  : 
 
@@ -103,8 +90,7 @@ it('Reusing Locators',()=>{
         cy.wrap(inputEmail).parents('form').find('button')
         cy.wrap(inputEmail).parents('form').find('nb-radio')
         cy.wrap('Hello').should('equal', 'Hello')
-        cy.wrap(inputEmail).as('inputEmail2')// to retur inputEmail from  then() we use alias
-        
+        cy.wrap(inputEmail).as('inputEmail2')
     })
     cy.get('@inputEmail2').click()
 
@@ -113,7 +99,7 @@ it('Reusing Locators',()=>{
 it('Extracting Values', ()=>{
     //1. using a JQuery method
     cy.get('[for="exampleInputEmail1"]').then(label=>{
-       const emailLabel = label.text() // extract a web element value
+       const emailLabel = label.text() 
         console.log(emailLabel)
     })
     //2. Using invoke Command
@@ -128,7 +114,7 @@ it('Extracting Values', ()=>{
      })//OR
      cy.get('#exampleInputEmail1').should('have.attr','class','input-full-width size-medium status-basic shape-rectangle nb-transition')
 
-     //cy.get('#exampleInputEmail1').invoke('attr','placeholder').then(placeholderValue=>{ //extract the value of the attribute placeholder of the web element with id "exampleInputEmail1"
+     //cy.get('#exampleInputEmail1').invoke('attr','placeholder').then(placeholderValue=>{ 
     //   console.log(placeholderValue)
      //})
      //Invoke(extract) input Field Value
