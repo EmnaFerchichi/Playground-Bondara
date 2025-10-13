@@ -109,7 +109,7 @@ it('Extracting Values', ()=>{
      cy.get('[for="exampleInputEmail1"]').invoke('text').as('emailLabel')
     
      //Invoke(extract) Attribute Value
-     cy.get('#exampleInputEmail1').invoke('attr','class').then(classValue=>{ //extract the value of the attribute class of the web element with id "exampleInputEmail1"
+     cy.get('#exampleInputEmail1').invoke('attr','class').then(classValue=>{ 
         console.log(classValue)
      })//OR
      cy.get('#exampleInputEmail1').should('have.attr','class','input-full-width size-medium status-basic shape-rectangle nb-transition')
